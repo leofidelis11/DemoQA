@@ -6,7 +6,7 @@ const {
   animals,
 } = require("unique-names-generator");
 
-describe("API Challenge Part 1", () => {
+describe("Challenge Part 1", () => {
     const randomName = uniqueNamesGenerator({ dictionaries: [colors, animals] });
     let token;
     let userId;
