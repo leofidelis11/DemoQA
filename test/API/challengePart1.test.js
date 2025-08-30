@@ -82,4 +82,20 @@ describe("API Challenge Part 1", () => {
     expect(response.body.books[0].isbn).to.be.a('string');
     expect(response.body.books[1].isbn).to.equal('9781449331818');
   }); 
+
+  it("List user details with chosen books", async () => {
+    const response = await request("https://demoqa.com")
+      .get(`/Account/v1/User/${userId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .set("Content-Type", "application/json");
+
+    expect(response.status).to.equal(200);
+    expect(response.body.username).to.equal(randomName);
+    expect(response.body.books[0].title).to.equal("Git Pocket Guide");
+    expect(response.body.books[0].author).to.equal("Richard E. Silverman");
+    expect(response.body.books[0].pages).to.equal(234);
+    expect(response.body.books[1].title).to.equal("Learning JavaScript Design Patterns");
+    expect(response.body.books[1].author).to.equal("Addy Osmani");
+    expect(response.body.books[1].pages).to.equal(254);
+  });
 });
