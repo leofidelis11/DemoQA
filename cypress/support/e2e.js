@@ -18,3 +18,6 @@ import './commands'
 
 // Import drag and drop
 import '@4tw/cypress-drag-drop';
+
+// Import html reporter
+import 'cypress-mochawesome-reporter/register';
