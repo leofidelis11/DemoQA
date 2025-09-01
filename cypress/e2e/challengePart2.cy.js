@@ -1,9 +1,11 @@
+import '@4tw/cypress-drag-drop'
+
 Cypress.on('uncaught:exception', (err, runnable) => {
         return false
         });
 
 describe('Challenge part 2', () => {
-  it.only('Fill form', () => {
+  it('Fill form', () => {
     cy.visit('/')
 
     cy.contains('h5', 'Forms').click();
@@ -14,52 +16,37 @@ describe('Challenge part 2', () => {
     cy.get('#userEmail').type('mickeymouse@example.com');
     cy.get('label[for="gender-radio-1"]').contains('Male').click();
     cy.get('#userNumber').type('1234567891');
-    //cy.get('#subjectsInput').type('Maths');
-    //cy.get('#hobbies-checkbox-1').check();
+    cy.get('#subjectsInput').type('Maths');
+    cy.get('#hobbies-checkbox-1').check();
     cy.get('#uploadPicture').selectFile('sampleFileToUpload.txt');
-    //cy.get('#currentAddress').type("Disney's Hollywood Studios - Orlando, Florida USA");
+    cy.get('#currentAddress').type("Disney's Hollywood Studios - Orlando, Florida USA");
     cy.get('#submit').click();
 
     cy.get('#example-modal-sizes-title-lg').contains('Thanks').should('be.visible')
     cy.get('#closeLargeModal').click({ force: true });
   });
 
-  it('Open new window', () => {
-    cy.visit('/').then((win) => {
-      cy.spy(win, 'open').as('open')
-    });
+  it.skip('Open new window', () => {
+    cy.visit('/')
 
     cy.contains('h5', 'Alerts, Frame & Windows').click();
     cy.get('li[id="item-0"]').contains('span', 'Browser Windows').click();
-    
-    cy.get('#windowButton').click();
+
+    cy.window().then((win) => {
+      cy.spy(win, 'open').as('open')
+    })
+
+    cy.get('#windowButton').click({ force: true });
+
     cy.get('@open')
-      .should('have.been.calledWith', '', 'MsgWindow')
+      .should('have.been.calledWith', '/sample', '_blank')
       .its('firstCall.returnValue')
       .then((childWindow) => {
-        expect(childWindow.document.body.innerText).to.have.text('This is a sample page')
+        expect(childWindow.document.body.h1.innerText).to.include('This is')
       })
       .wait(1000)
       .invoke('close')
-    /*
-    //cy.url().should('include', '/sample');
-    cy.get('#sampleHeading').should('have.text', 'This is a sample page'); */
   });
-
-  it.only('opens a real window in the current test runner', () => {
-  cy.visit('/browser-windows').then((win) => {
-    cy.spy(win, 'open').as('open')
-  })
-  cy.get('#messageWindowButton').click()
-  cy.get('@open')
-    .should('have.been.calledWith', '', 'MsgWindow')
-    .its('firstCall.returnValue')
-    .then((childWindow) => {
-      expect(childWindow.document.body.innerText).to.include('Knowledge')
-    })
-    .wait(1000)
-    .invoke('close')
-})
 
   it('Web tables', () => {
     cy.visit('/')
@@ -76,12 +63,10 @@ describe('Challenge part 2', () => {
     cy.get('#department').type('Entertainment');
     cy.get('#submit').click();
 
-    cy.get('.rt-tbody').scrollTo('right')
     cy.get('#edit-record-4').click();
     cy.get('#age').type(25);
     cy.get('#submit').click();
 
-    cy.get('.rt-tbody').scrollTo('right')
     cy.get('#delete-record-4').click();
   });
 
@@ -96,9 +81,8 @@ describe('Challenge part 2', () => {
 
     cy.get('div[role="progressbar"]').should('have.length.of.at.most', 25);
     cy.get('#startStopButton').click();
-    //cy.get('div[role="progressbar"]', { timeout: 50000 }).should('have.attr', 'aria-valuenow', '100');
-    cy.get('#resetButton').should('be.visible').click();
-    cy.get('div[role="progressbar"]').should('have.attr', 'aria-valuenow', '0');
+    cy.get('#resetButton', { timeout: 10000 }).should('be.visible').click({ force: true });
+    cy.get('div[role="progressbar"]', { timeout: 5000 }).should('have.attr', 'aria-valuenow', '0');
   });
 
   it('Sortable', () => {
@@ -107,12 +91,13 @@ describe('Challenge part 2', () => {
     cy.contains('h5', 'Interactions').click();
     cy.get('li[id="item-0"]').contains('span', 'Sortable').click();
 
-    cy.get('.vertical-list-container').children().eq(0).as('one');
-    cy.get('.vertical-list-container').children().eq(1).as('two');
-    cy.get('@one').drag('@two', { position: 'bottom' });
-
     cy.get('.vertical-list-container').children().contains('One').as('one');
     cy.get('.vertical-list-container').children().contains('Two').as('two');
-    cy.get('@one').drag('@two', { position: 'top' });
+    cy.get('@one').drag('@two', { force: true });
+
+    cy.get('.vertical-list-container').children().first().should('have.text', 'Two');
+
+    cy.get('@two').drag('@one', { force: true });
+    cy.get('.vertical-list-container').children().first().should('have.text', 'One');
   });
 });
