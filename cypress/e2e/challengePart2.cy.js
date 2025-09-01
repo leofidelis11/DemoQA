@@ -16,36 +16,33 @@ describe('Challenge part 2', () => {
     cy.get('#userEmail').type('mickeymouse@example.com');
     cy.get('label[for="gender-radio-1"]').contains('Male').click();
     cy.get('#userNumber').type('1234567891');
-    //cy.get('#subjectsInput').type('Maths');
-    //cy.get('#hobbies-checkbox-1').check();
     cy.get('#uploadPicture').selectFile('sampleFileToUpload.txt');
-    //cy.get('#currentAddress').type("Disney's Hollywood Studios - Orlando, Florida USA");
     cy.get('#submit').click();
 
     cy.get('#example-modal-sizes-title-lg').contains('Thanks').should('be.visible')
     cy.get('#closeLargeModal').click({ force: true });
   });
 
-  it.skip('Open new window', () => {
+  it('Open new window', () => {
     cy.visit('/')
 
     cy.contains('h5', 'Alerts, Frame & Windows').click();
     cy.get('li[id="item-0"]').contains('span', 'Browser Windows').click();
 
     cy.window().then((win) => {
-      cy.spy(win, 'open').as('open')
-    })
+      cy.stub(win, 'open').callsFake((url) => {
+        win.location.href = url;
+      }).as('windowOpen');
+    });
 
-    cy.get('#windowButton').click({ force: true });
+    cy.get('#windowButton').click();
 
-    cy.get('@open')
-      .should('have.been.calledWith', '/sample', '_blank')
-      .its('firstCall.returnValue')
-      .then((childWindow) => {
-        expect(childWindow.document.body.h1.innerText).to.include('This is')
-      })
-      .wait(1000)
-      .invoke('close')
+    cy.url().should('include', 'sample');
+    cy.get('#sampleHeading')
+      .should('be.visible')
+      .and('contain.text', 'This is a sample page');
+    
+    cy.go('back');
   });
 
   it('Web tables', () => {
