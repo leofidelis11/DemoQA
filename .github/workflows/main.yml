@@ -1,0 +1,24 @@
+name: 'Demo QA - CI'
+
+on:
+  push:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    env:
+      BASE_URL: 'https://demoqa.com'
+
+    steps:
+      - name: Repo checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: npm install
+
+      - name: Execute API tests
+        run: npm test:api
+      
+      - name: Execute Frontend tests
+        run: npm test:ui

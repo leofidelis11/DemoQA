@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/**/*.test.js --timeout=20000",
-    "test:ui": "mocha ./test/Frontend/*.test.js --timeout=20000",
+    "test:ui": "npx cypress run",
     "test:api": "mocha ./test/API/*.test.js --timeout=20000"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@4tw/cypress-drag-drop": "^2.3.0",
     "chai": "^6.0.1",
     "cypress": "^14.5.1",
     "mocha": "^11.7.1",
