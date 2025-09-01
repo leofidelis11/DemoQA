@@ -18,7 +18,7 @@ jobs:
         run: npm install
 
       - name: Execute API tests
-        run: npm test:api
+        run: npm run test:api
       
       - name: Execute Frontend tests
-        run: npm test:ui
+        run: npm run test:ui
